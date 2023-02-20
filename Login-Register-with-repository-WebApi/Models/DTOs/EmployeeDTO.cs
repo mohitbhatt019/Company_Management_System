@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Company_Project.Models
+namespace Company_Project.Models.DTOs
 {
-    public class Employee
+    public class EmployeeDTO
     {
         [Key]
         public int EmployeeId { get; set; }
@@ -12,11 +12,5 @@ namespace Company_Project.Models
         public string Employee_Account_Number { get; set; }
         public string Employee_PF_Number { get; set; }
         public int CompanyId { get; set; }
-        public Company Company { get; set; }
-        public string? ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-        public List<Designation> Employee_Designations { get; set; }
-
-
     }
 }

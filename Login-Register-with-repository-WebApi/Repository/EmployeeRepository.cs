@@ -1,20 +1,19 @@
 ﻿using Company_Project.Models;
 using Company_Project.Repository.IRepository;
-using System.Linq.Expressions;
 
 namespace Company_Project.Repository
 {
-    public class CompanyRepository : Repository<Company>, ICompanyRepository
+    public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
-        public CompanyRepository(ApplicationDbContext context):base(context) 
+        public EmployeeRepository(ApplicationDbContext context):base(context)
         {
             _context = context;
         }
 
-        public void Update(Company company)
+        public void Update(Employee employee)
         {
-            _context.Companies.Update(company);
+            _context.Update(employee);
             _context.SaveChanges();
         }
     }

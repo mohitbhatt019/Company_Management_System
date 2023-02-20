@@ -72,6 +72,8 @@ namespace Company_Project.Repository
         public void Remove(T entity)
         {
             dbSet.Remove(entity);
+            _context.SaveChanges();
+
         }
 
         public void Remove(int id)
@@ -81,11 +83,15 @@ namespace Company_Project.Repository
 
             var entity = Get(id);
             Remove(entity);
+            _context.SaveChanges();
+
         }
 
         public void RemoveRange(IEnumerable<T> entity)
         {
             dbSet.RemoveRange(entity);
+            _context.SaveChanges();
+
         }
     }
 }

@@ -1,9 +1,79 @@
 import React from 'react'
 import Header from './Header'
 import  { useEffect, useState } from 'react'
-
+import axios from 'axios';
 
 function Employee() {
+  const initData={
+     employeeId:"",
+    employeeName:"",
+    employeeAddress:"",
+    employee_Pancard_Number:"",
+    employee_Account_Number:"",
+    employee_PF_Number:"",
+    companyId:""
+  };
+  const[employees,setEmployees]=useState(null);
+  const[employeeForm,setEmployeeForm]=useState({});
+
+  useEffect(()=>{
+    getAll();
+    console.log(employees);
+  },[]);
+
+  const changeHandler=(event)=>{
+    setEmployeeForm({
+      ...employeeForm,[event.target.name]:event.target.value,
+    });
+  };
+ 
+     function renderEmployee(){
+      let employeeRows=[];
+      employees?.map((item)=>{
+        employeeRows.push(
+          <tr>
+            <td>{item.employeeId}</td>
+            <td>{item.employeeName}</td>
+            <td>{item.employeeAddress}</td>
+            <td>{item.employee_Pancard_Number}</td>
+            <td>{item.employee_Account_Number}</td>
+            <td>{item.employee_PF_Number}</td>
+            <td>{item.companyId}</td>
+            { <td>
+              <button onClick={()=>editClick(item)} className='btn btn-info m-1' data-toggle='modal'data-target="#editModel">Edit</button>
+              <button onClick={()=>deleteClick(item.employeeId)} className='btn btn-danger'>Delete</button>
+            </td> }
+          </tr>
+        )
+      })
+      return employeeRows
+     }
+
+     function editClick(){
+
+     } 
+     
+     function deleteClick(){
+      
+     }
+  
+   function getAll(){
+    //JWT
+    // let token=localStorage.getItem("currentUser")
+     axios.get("https://localhost:7077/api/Employee").then((d)=>{
+      if(d.data){
+        alert("Api call sucessfull")
+        setEmployees(d.data);
+      }
+      else{
+        alert("Issue in api")
+      }
+     }).catch((e)=>{
+      alert("error with api")
+
+     })
+     
+   }
     return (
         <div>
         <h2 className='text-primary text-center'>Employee Page</h2>
@@ -17,15 +87,19 @@ function Employee() {
         </div>
   
         <table className='table table-bordered  table-active'>
-          <thead>
+          <thead> 
             <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Salary</th>
+              <th>Employee Id</th>
+              <th>Employee Name</th>
+              <th>Employee Address</th>
+              <th>Employee Pancard Number</th>
+              <th>Employee Account Number</th>
+              <th>Employee PF Number</th>
+              <th>Company ID</th>
               <th>Actions</th>
             </tr>
           </thead>
-          {/* <tbody>{renderEmployee()}</tbody> */}
+          { <tbody>{renderEmployee()}</tbody> }
         </table>
   
         {/* Save */}
@@ -44,37 +118,63 @@ function Employee() {
                 <div className='modal-body'>
                   <div className='form-group row'>
                     <label for="txtname" className='col-sm-4'>
-                      Name
+                    Employee Name
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtname" name="Name" placeholder="Enter Name" className="form-control"
+                      <input type="text" id="txtname" name="employeeName" placeholder="Enter Employee Name" className="form-control"
                       //  value={employeeForm.name} 
-                    //   onChange={changeHandler}
+                       onChange={changeHandler}
                       />
                     </div>
                   </div>
                   <div className='form-group row'>
-                   <label for="txtaddress" className='col-sm-4'>
-                      Address
+                   <label for="employeeAddress" className='col-sm-4'>
+                   Employee Address
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtaddress" name="Address" placeholder="Enter Address" className="form-control"
+                      <input type="text" id="employeeAddress" name="employeeAddress" placeholder="Enter Address" className="form-control"
                       //  value={employeeForm.name} 
-                    //   onChange={changeHandler}
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
                   <div className='form-group row'>
                     <label for="txtsalary" className='col-sm-4'>
-                    Salary
+                    employee Pancard Number
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtsalary" name="Salary" placeholder="Enter Salary" className="form-control"
+                      <input type="number" id="txtsalary" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
                       //  value={employeeForm.name}
-                    //    onChange={changeHandler}
+                        onChange={changeHandler}
                       />
                     </div>
                   </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_Account_Number" className='col-sm-4'>
+                    Employee Account Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_Account_Number" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
+                      //  value={employeeForm.name}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_PF_Number" className='col-sm-4'>
+                    Employee PF Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_PF_Number" name="employee_PF_Number" placeholder="Enter Employee PF Number" className="form-control"
+                      //  value={employeeForm.name}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+
                 </div>
                 {/* Footer */}
                 <div className='modal-footer bg-info'>

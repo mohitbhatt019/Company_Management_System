@@ -43,6 +43,7 @@ function Login() {
     if(d.data.status=1){
        
         localStorage.setItem("currentUser",d.data.token)
+        console.log("currentUser")
         
         alert("user Logged in");
         navigate("/home")

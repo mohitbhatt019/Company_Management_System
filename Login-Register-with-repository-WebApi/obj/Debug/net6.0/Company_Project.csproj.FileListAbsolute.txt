@@ -216,3 +216,5 @@ D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\obj\Debu
 D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\obj\Debug\net6.0\Company_Project.pdb
 D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\obj\Debug\net6.0\Company_Project.genruntimeconfig.cache
 D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\obj\Debug\net6.0\ref\Company_Project.dll
+D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\bin\Debug\net6.0\AutoMapper.dll
+D:\CS Assignments\Company_Project\Login-Register-with-repository-WebApi\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

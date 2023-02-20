@@ -11,11 +11,11 @@ namespace Company_Project.Models
         public string CompanyName { get; set; }
         public string CompanyAddress { get; set; }
         public string CompanyGST { get; set; }
-       // public string ApplicationUserId { get; set; }
-       // [ForeignKey("ApplicationUserId")]
-      //
-      //public ApplicationUser ApplicationUser { get; set; }
-        //public List<Employee> Company_Employees { get; set; }
+        public string? ApplicationUserId { get; set; }
+        [ForeignKey("ApplicationUserId")]
+      
+      public ApplicationUser? ApplicationUser { get; set; }
+        public List<Employee>? Company_Employees { get; set; }
 
 
     }

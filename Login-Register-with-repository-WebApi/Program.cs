@@ -1,7 +1,9 @@
+using Company_Project.DTOMapping;
 using Company_Project.Models;
 using Company_Project.Repository;
 using Company_Project.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,9 @@ builder.Services.AddCors(options =>
 
 });
 
+//AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
 ConfigurationManager configuration = builder.Configuration;
 
@@ -33,6 +38,7 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddScoped<IAuthenticateRepository, AuthenticateRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 
 // For Entity Framework

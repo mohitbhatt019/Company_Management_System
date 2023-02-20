@@ -7,6 +7,7 @@ import Login from './screens/Login';
 import Home from './screens/Home';
 import About from './screens/About';
 import Employee from './screens/Employee';
+import Company from './screens/Company';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path='home' element={<Home/>}/>   
         <Route path='about' element={<About/>}/>   
         <Route path='employee' element={<Employee/>}/>   
+        <Route path='company' element={<Company/>}/>   
       </Routes>
       </BrowserRouter>
     </div>

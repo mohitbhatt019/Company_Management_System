@@ -86,6 +86,8 @@ namespace Company_Project.Controllers
                         RefreshToken = refreshToken,
                         RefreshTokenExpiry = DateTime.Now.AddDays(7)
                     };
+                    _context.TokenInfo.Add(info);
+                    _context.SaveChanges();
                 }
                 else
                 {
@@ -100,6 +102,7 @@ namespace Company_Project.Controllers
                 {
                     return BadRequest(ex.Message);
                 }
+
                 return Ok(new LoginResponse
                 {
                     Name = user.Name,
@@ -122,6 +125,32 @@ namespace Company_Project.Controllers
             return Ok(new { Message = "Login successfully!!!" });
 
         }
+
+        #region RefreshToken
+        [HttpPost]
+        [Route("Refresh")]
+        public IActionResult Refresh(RefreshTokenRequest tokenApiModel)
+        {
+            if (tokenApiModel is null)
+                return BadRequest("Invalid client request");
+            string accessToken = tokenApiModel.AccessToken;
+            string refreshToken = tokenApiModel.RefreshToken;
+            var principal = _tokenService.GetPrincipleFromExpiredToken(accessToken);
+            var username = principal.Identity.Name;
+            var user = _context.TokenInfo.SingleOrDefault(u => u.Username == username);
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiry <= DateTime.Now)
+                return BadRequest("Invalid client Request");
+            var newAccessToken = _tokenService.GetToken(principal.Claims);
+            var newRefreshToken = _tokenService.GetRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            _context.SaveChanges();
+            return Ok(new RefreshTokenRequest()
+            {
+                AccessToken = newAccessToken.TokenString,
+                RefreshToken = newRefreshToken
+            });
+        }
+        #endregion
 
     }
 }
