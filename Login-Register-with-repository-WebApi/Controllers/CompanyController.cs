@@ -2,14 +2,17 @@
 using Company_Project.Models;
 using Company_Project.Models.DTO;
 using Company_Project.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace Company_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize]
+
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepository;
@@ -20,6 +23,7 @@ namespace Company_Project.Controllers
             _mapper = mapper;
         }
 
+        //It Method will add employees
         [HttpPost]
         public IActionResult AddCompany([FromBody]CompanyDTO companyDTO)
         {
@@ -35,6 +39,8 @@ namespace Company_Project.Controllers
 
             return Ok(new {message="Company Added"});
         }
+
+        //This method will Display the list of all companies
         [HttpGet]
         public IActionResult GetCompany()
         {
@@ -42,6 +48,8 @@ namespace Company_Project.Controllers
             if(companyList==null) return NotFound();
             return Ok(companyList);
         }
+
+        //This method will delete company
 
         [HttpDelete] 
         public IActionResult DeleteCompany(int companyId)
@@ -51,6 +59,8 @@ namespace Company_Project.Controllers
             return Ok(new {message="Company Deleted Sucessfully"});  
         }
 
+
+        //This method will update company
         [HttpPut]
         public IActionResult UpdateCompany([FromBody] CompanyDTO companyDTO)
         {

@@ -2,8 +2,8 @@
 {
     public class UserRoles
     {
-        public const string Admin = "Admin";
-        public const string Company = "Company";
-        public const string Employee = "Employee";
+        public const string Role_Admin = "Admin";
+        public const string Role_Company = "Company";
+        public const string Role_Employee = "Employee";
     }
 }

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import Employee from './Employee';
 
 
 function Company() {
 const initData={
-    companyId:"",
+    // companyId:"",
     companyName: "",
     companyAddress: "",
     companyGST: ""
@@ -16,7 +15,7 @@ const[companyForm,setcompanyForm]=useState({});
 
 useEffect(()=>{
     getAll();
-    console.log(company);
+    //console.log(company);
 },[])
 
 const changeHandler=(event)=>{
@@ -25,6 +24,47 @@ const changeHandler=(event)=>{
     });
 };
 
+function saveClick(){
+  debugger
+  
+
+  
+        //jwt
+        let token=localStorage.getItem("currentUser");
+            alert(companyForm.companyAddress)
+        axios.post("https://localhost:7077/api/Company",companyForm,
+        {headers:{Authorization:`Bearer ${token}`}},
+        ).then((d)=>{
+         if(d.data){
+          getAll();
+          companyForm(initData)
+           alert("Data saved")
+         }
+         else{
+           alert("Data not save")
+         }
+        }).catch((e)=>{
+         alert("wrong with api")
+   
+        })
+ }
+
+
+function getAll(){
+  let token=localStorage.getItem("currentUser");
+  axios.get("https://localhost:7077/api/Company",{headers:{Authorization:`Bearer ${token}`},}).then((d)=>{
+    if(d.data){
+      console.log(d.data)
+      setCompany(d.data)
+      //alert("Api call secessfull")
+    }
+    else{
+      alert("Api not called secessfully")
+    }
+  }).catch((e)=>{
+    alert("Wrong with api")
+  })
+}
 
 function renderCompany(){
     let companyRows=[];
@@ -53,21 +93,6 @@ setcompanyForm(data);
 function deleteClick(){
 // Later
 }
-
-function getAll(){
-    axios.get("https://localhost:7077/api/Company").then((d)=>{
-        if(d.data){
-            alert("Api called sucessfull")
-            setCompany(d.data)
-        }
-        else{
-            alert("Issue in api")
-        }
-    }).catch((e)=>{
-        alert("Issue in api")
-    })
-}
-
 
   return (
     <div>
@@ -113,9 +138,9 @@ function getAll(){
                     Company Name
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtcompanyName" name="Name" placeholder="Enter Company Name" className="form-control"
-                      //  value={employeeForm.name} 
-                      //onChange={changeHandler}
+                      <input type="text" id="txtcompanyName" name="companyName" placeholder="Enter Company Name" className="form-control"
+                        value={companyForm.companyName} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
@@ -124,9 +149,9 @@ function getAll(){
                       Company Address
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtcompanyAddress" name="Address" placeholder="Enter Company Address" className="form-control"
-                      //  value={employeeForm.name} 
-                      //onChange={changeHandler}
+                      <input type="text" id="txtcompanyAddress" name="companyAddress" placeholder="Enter Company Address" className="form-control"
+                        value={companyForm.companyAddress} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
@@ -135,9 +160,9 @@ function getAll(){
                     Company GST
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtcompanyGST" name="Company GST" placeholder="Enter Company GST" className="form-control"
-                      //  value={employeeForm.name}
-                       //onChange={changeHandler}
+                      <input type="text" id="txtcompanyGST" name="companyGST" placeholder="Enter Company GST" className="form-control"
+                        value={companyForm.companyGST}
+                       onChange={changeHandler}
                       />
                     </div>
                   </div>
@@ -145,7 +170,7 @@ function getAll(){
                 {/* Footer */}
                 <div className='modal-footer bg-info'>
                   <button
-                     //onClick={saveClick} 
+                     onClick={saveClick} 
                     className="btn btn-success" data-dismiss="modal">
                       Save 
                   </button>
@@ -161,7 +186,7 @@ function getAll(){
 
          {/* Edit */}
          <form>
-          <div className='modal' id="editmodal" role="dialog">
+          <div className='modal' id="editModal" role="dialog">
             <div className="modal-dialog">
               <div className='modal-content'>
                 {/* header */}
@@ -179,8 +204,8 @@ function getAll(){
                     </label>
                     <div className='col-sm-8'>
                       <input type="text" id="txtcompanyName" name="Name" placeholder="Enter Company Name" className="form-control"
-                      //  value={employeeForm.name} 
-                      //onChange={changeHandler}
+                        value={companyForm.companyName} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
@@ -190,22 +215,24 @@ function getAll(){
                     </label>
                     <div className='col-sm-8'>
                       <input type="text" id="txtcompanyAddress" name="Address" placeholder="Enter Company Address" className="form-control"
-                      //  value={employeeForm.name} 
-                      //onChange={changeHandler}
+                        value={companyForm.companyAddress} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
+
                   <div className='form-group row'>
-                    <label for="txtcompanyGST" className='col-sm-4'>
-                    Company GST
+                   <label for="txtcompanyGst" className='col-sm-4'>
+                      Company Address
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtcompanyGST" name="Salary" placeholder="Enter Company GST" className="form-control"
-                      //  value={employeeForm.name}
-                       //onChange={changeHandler}
+                      <input type="text" id="txtcompanyGst" name="companyGst" placeholder="Enter Company Address" className="form-control"
+                        value={companyForm.companyGST} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
+                  
                 </div>
                 {/* Footer */}
                 <div className='modal-footer bg-info'>

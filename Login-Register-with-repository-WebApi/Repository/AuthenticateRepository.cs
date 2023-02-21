@@ -20,7 +20,9 @@ namespace Company_Project.Repository
         {
             var user = await _userManager.FindByNameAsync(userName);
             bool VERIFY = await _userManager.CheckPasswordAsync(user, userPassword);
-            if (VERIFY == true) return user;
+            if (VERIFY == true)
+             //await _userManager.AddToRoleAsync(user, UserRoles.Role_Admin);
+            return user;
             return null;
 
          }

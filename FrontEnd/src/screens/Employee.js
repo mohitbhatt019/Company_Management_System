@@ -1,11 +1,9 @@
 import React from 'react'
-import Header from './Header'
 import  { useEffect, useState } from 'react'
 import axios from 'axios';
 
 function Employee() {
   const initData={
-     employeeId:"",
     employeeName:"",
     employeeAddress:"",
     employee_Pancard_Number:"",
@@ -18,7 +16,8 @@ function Employee() {
 
   useEffect(()=>{
     getAll();
-    console.log(employees);
+    
+    //console.log(employees);
   },[]);
 
   const changeHandler=(event)=>{
@@ -39,30 +38,99 @@ function Employee() {
             <td>{item.employee_Account_Number}</td>
             <td>{item.employee_PF_Number}</td>
             <td>{item.companyId}</td>
-            { <td>
+             <td>
               <button onClick={()=>editClick(item)} className='btn btn-info m-1' data-toggle='modal'data-target="#editModel">Edit</button>
               <button onClick={()=>deleteClick(item.employeeId)} className='btn btn-danger'>Delete</button>
-            </td> }
+              
+            </td> 
           </tr>
         )
       })
       return employeeRows
      }
 
-     function editClick(){
-
+     function editClick(data){
+      setEmployeeForm(data)
      } 
-     
-     function deleteClick(){
+
+     function deleteClick(employeeId){
+      debugger
+      var token=localStorage.getItem("currentUser")
+      //alert(id)
+      let ans=window.confirm('Want to delete data???')
+      if(!ans) return;
       
+      axios.delete("https://localhost:7077/api/Employee?employeeId="+employeeId,{data:{ employeeId:Number(employeeId) },
+      headers:{Authorization:`Bearer ${token}`},
+    }).then((d)=>{
+      
+        if(d){
+          alert(employeeId)
+          alert("Data deleted successfully");
+          getAll();
+        }
+        else{
+          alert(d.data.message)
+        }
+      }).catch((e)=>{
+        alert(JSON.stringify(e));
+
+      })
+     }
+
+     function saveClick(){
+      debugger
+            //jwt
+            let token=localStorage.getItem("currentUser");
+                alert(employeeForm.employeeName)
+            axios.post("https://localhost:7077/api/Employee",employeeForm,
+            
+            {headers:{Authorization:`Bearer ${token}`}},
+            ).then((d)=>{
+             if(d.data){
+              
+               alert("Data saved")
+             }
+             else{
+               alert("Data not save")
+             }
+            }).catch((e)=>{
+             alert("wrong with api")
+       
+            })
+     }
+  
+     
+     
+
+     function updateClick(){
+      // debugger
+      let token=localStorage.getItem("currentUser");
+      //alert(employeeForm.employeeName)
+      axios.put("https://localhost:7077/api/Employee",employeeForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
+        if(d.data){
+          alert("Api call sucessfull")
+          console.log(d.data);
+         setEmployees(d.data);
+         getAll()
+       }
+       else{
+         alert("Issue in api")
+       }
+      }).catch((e)=>{
+       alert("error with api")
+ 
+      })
      }
   
    function getAll(){
     //JWT
-    // let token=localStorage.getItem("currentUser")
-     axios.get("https://localhost:7077/api/Employee").then((d)=>{
-      if(d.data){
-        alert("Api call sucessfull")
+     let token=localStorage.getItem("currentUser");
+     console.log(token)
+     axios.get("https://localhost:7077/api/Employee",{headers:{Authorization:`Bearer ${token}`},}).then((d)=>{
+       if(d.data){
+         //alert("Api call sucessfull")
+         console.log(d.data);
         setEmployees(d.data);
       }
       else{
@@ -122,7 +190,7 @@ function Employee() {
                     </label>
                     <div className='col-sm-8'>
                       <input type="text" id="txtname" name="employeeName" placeholder="Enter Employee Name" className="form-control"
-                      //  value={employeeForm.name} 
+                        value={employeeForm.employeeName} 
                        onChange={changeHandler}
                       />
                     </div>
@@ -133,7 +201,7 @@ function Employee() {
                     </label>
                     <div className='col-sm-8'>
                       <input type="text" id="employeeAddress" name="employeeAddress" placeholder="Enter Address" className="form-control"
-                      //  value={employeeForm.name} 
+                        value={employeeForm.employeeAddress} 
                       onChange={changeHandler}
                       />
                     </div>
@@ -143,32 +211,44 @@ function Employee() {
                     employee Pancard Number
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtsalary" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
-                      //  value={employeeForm.name}
+                      <input type="text" id="txtsalary" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
+                        value={employeeForm.employee_Pancard_Number}
                         onChange={changeHandler}
                       />
                     </div>
                   </div>
 
                   <div className='form-group row'>
-                    <label for="employee_Account_Number" className='col-sm-4'>
+                    <label for="employee_Account_Numberrr" className='col-sm-4'>
                     Employee Account Number
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="employee_Account_Number" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
-                      //  value={employeeForm.name}
+                      <input type="number" id="employee_Account_Numberrr" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
+                        value={employeeForm.employee_Account_Number}
                         onChange={changeHandler}
                       />
                     </div>
                   </div>
 
+                 
                   <div className='form-group row'>
                     <label for="employee_PF_Number" className='col-sm-4'>
                     Employee PF Number
                     </label>
                     <div className='col-sm-8'>
                       <input type="number" id="employee_PF_Number" name="employee_PF_Number" placeholder="Enter Employee PF Number" className="form-control"
-                      //  value={employeeForm.name}
+                        value={employeeForm.employee_PF_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+                  <div className='form-group row'>
+                    <label for="EmployeeCompanyId" className='col-sm-4'>
+                    Employee Company Id
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="EmployeeCompanyId" name="companyId" placeholder="Enter Company Id" className="form-control"
+                        value={employeeForm.companyId}
                         onChange={changeHandler}
                       />
                     </div>
@@ -179,7 +259,7 @@ function Employee() {
                 {/* Footer */}
                 <div className='modal-footer bg-info'>
                   <button
-                    //  onClick={saveClick} 
+                      onClick={saveClick} 
                     className="btn btn-success" data-dismiss="modal">
                       Save 
                   </button>
@@ -194,7 +274,7 @@ function Employee() {
   
         {/* Edit */}
         <form>
-          <div className='modal' id="editModal" role="dialog">
+          <div className='modal' id="editModel" role="dialog">
             <div className="modal-dialog">
               <div className='modal-content'>
                 {/* header */}
@@ -204,46 +284,72 @@ function Employee() {
                     <span>&times;</span>
                   </button>
                 </div>
-                {/* Body */}
-                <div className='modal-body'>
+                   {/* Body */}
+                    <div className='modal-body'>
                   <div className='form-group row'>
-                    <label for="txtname" className='col-sm-4'>
-                      Name
+                    <label for="txtename" className='col-sm-4'>
+                    Employee Name
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtname" name="Name" placeholder="Enter Name" className="form-control"
-                        // value={employeeForm.Name} 
-                        // onChange={changeHandler}
+                      <input type="text" id='txtename' name="employeeName" placeholder="Enter Employee Name" className="form-control"
+                        value={employeeForm.employeeName} 
+                       onChange={changeHandler}
                       />
                     </div>
                   </div>
                   <div className='form-group row'>
-                   <label for="txtaddress" className='col-sm-4'>
-                      Address
+                   <label for="employeeAddres" className='col-sm-4'>
+                   Employee Address
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtaddress" name="Address" placeholder="Enter Address" className="form-control"
-                        // value={employeeForm.Address} 
-                        // onChange={changeHandler}
+                      <input type="text" id="employeeAddres" name="employeeAddress" placeholder="Enter Address" className="form-control"
+                        value={employeeForm.employeeAddress} 
+                      onChange={changeHandler}
                       />
                     </div>
                   </div>
                   <div className='form-group row'>
-                    <label for="txtsalary" className='col-sm-4'>
-                    Salary
+                    <label for="txtsal" className='col-sm-4'>
+                    employee Pancard Number
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtsalary" name="Salary" placeholder="Enter Salary" className="form-control"
-                        // value={employeeForm.Salary} 
-                        // onChange={changeHandler}
+                      <input type="number" id="txtsal" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
+                        value={employeeForm.employee_Pancard_Number}
+                        onChange={changeHandler}
                       />
                     </div>
                   </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_Account_Num" className='col-sm-4'>
+                    Employee Account Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_Account_Num" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
+                        value={employeeForm.employee_Account_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_PF_Num" className='col-sm-4'>
+                    Employee PF Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_PF_Num" name="employee_PF_Number" placeholder="Enter Employee PF Number" className="form-control"
+                        value={employeeForm.employee_PF_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+
                 </div>
                 {/* Footer */}
                 <div className='modal-footer bg-info'>
                   <button
-                    //  onClick={updateClick} 
+                      onClick={updateClick} 
                     className="btn btn-success" data-dismiss="modal">
                       Update 
                   </button>

@@ -4,6 +4,7 @@ using Company_Project.Models.DTO;
 using Company_Project.Models.DTOs;
 using Company_Project.Repository;
 using Company_Project.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.Design;
@@ -12,6 +13,7 @@ namespace Company_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeRepository _employeeRepository;
@@ -24,6 +26,10 @@ namespace Company_Project.Controllers
             _mapper = mapper;
             _context = context;
         }
+
+        //this method will add Employees and from here we can know that which employee belongs to which company
+        //here i have add a check that if user is entering a random company id so first it will find in the database
+        //that the companyId entered by user is exist or not
         [HttpPost]
         public IActionResult AddEmployee(EmployeeDTO employeeDTO)
         {
@@ -40,6 +46,7 @@ namespace Company_Project.Controllers
             return Ok(new { message = "Employee Added" });
         }
 
+        //This method will give the list of employees
         [HttpGet]
         public IActionResult GetEmployees()
         {
@@ -47,6 +54,8 @@ namespace Company_Project.Controllers
             if(employeeList ==null) return NotFound(new { message = "No Employee Found" });
             return Ok(employeeList);
         }
+
+        //This method will update the employees
         [HttpPut]
         public IActionResult UpdateEmployee(EmployeeDTO employeeDTO) 
         {
@@ -59,12 +68,14 @@ namespace Company_Project.Controllers
             _employeeRepository.Update(employee);
             return Ok(new { message = "Employee Updated Sucessfully" });
         }
+
+        //This method will delete the employee
         [HttpDelete]
         public IActionResult DeleteEmployees(int employeeId)
-        {
-            if (employeeId == null) return NotFound();
+            {
+            if (employeeId == 0) return NotFound();
             _employeeRepository.Remove(employeeId);
-            return Ok(new { message = "Employee Deleted Sucessfully" });
+            return Ok(new { message = "Employee Deleted Sucessfully",status=1 });
 
         }
     }

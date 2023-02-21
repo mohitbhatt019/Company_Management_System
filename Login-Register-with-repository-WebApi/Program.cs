@@ -87,6 +87,32 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//Roles 
+
+IServiceScopeFactory serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+using (IServiceScope scope = serviceScopeFactory.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    if (!await roleManager.RoleExistsAsync(UserRoles.Role_Admin))
+    {
+        var role = new IdentityRole();
+        role.Name = UserRoles.Role_Admin;
+        await roleManager.CreateAsync(role);
+    }
+    if (!await roleManager.RoleExistsAsync(UserRoles.Role_Employee))
+    {
+        var role = new IdentityRole();
+        role.Name = UserRoles.Role_Employee;
+        await roleManager.CreateAsync(role);
+    }
+    if (!await roleManager.RoleExistsAsync(UserRoles.Role_Company))
+    {
+        var role = new IdentityRole();
+        role.Name = UserRoles.Role_Company;
+        await roleManager.CreateAsync(role);
+    }
+}
 app.UseAuthentication();
 
 app.UseCors("MyPolicy");
