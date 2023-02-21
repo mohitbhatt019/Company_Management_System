@@ -88,7 +88,7 @@ function Employee() {
             {headers:{Authorization:`Bearer ${token}`}},
             ).then((d)=>{
              if(d.data){
-              
+              getAll();
                alert("Data saved")
              }
              else{
@@ -108,11 +108,11 @@ function Employee() {
       let token=localStorage.getItem("currentUser");
       //alert(employeeForm.employeeName)
       axios.put("https://localhost:7077/api/Employee",employeeForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
-        if(d.data){
+        if(d.data){ 
+          getAll()
           alert("Api call sucessfull")
           console.log(d.data);
          setEmployees(d.data);
-         getAll()
        }
        else{
          alert("Issue in api")

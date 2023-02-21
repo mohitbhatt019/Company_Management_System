@@ -26,9 +26,6 @@ const changeHandler=(event)=>{
 
 function saveClick(){
   debugger
-  
-
-  
         //jwt
         let token=localStorage.getItem("currentUser");
             alert(companyForm.companyAddress)
@@ -37,7 +34,7 @@ function saveClick(){
         ).then((d)=>{
          if(d.data){
           getAll();
-          companyForm(initData)
+          //companyForm(initData)
            alert("Data saved")
          }
          else{
@@ -90,9 +87,51 @@ function editClick(data){
 setcompanyForm(data);
 }
 
-function deleteClick(){
-// Later
-}
+function updateClick(){
+  // debugger
+  let token=localStorage.getItem("currentUser");
+  //alert(employeeForm.employeeName)
+  axios.put("https://localhost:7077/api/Company",companyForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
+    if(d.data){ 
+      getAll()
+      alert("Api call sucessfull")
+      console.log(d.data);
+     setCompany(d.data);
+   }
+   else{
+     alert("Issue in api")
+   }
+  }).catch((e)=>{
+   alert("error with api")
+
+  })
+ }
+
+
+
+function deleteClick(companyId){
+  debugger
+  var token=localStorage.getItem("currentUser")
+  //alert(id)
+  let ans=window.confirm('Want to delete data???')
+  if(!ans) return;
+  
+  axios.delete("https://localhost:7077/api/Company?companyId="+companyId,{headers:{Authorization:`Bearer ${token}`},
+}).then((d)=>{
+  
+    if(d){
+      alert(companyId)
+      alert("Data deleted successfully");
+      getAll();
+    }
+    else{
+      alert(d.data.message)
+    }
+  }).catch((e)=>{
+    alert(JSON.stringify(e));
+
+  })
+ }
 
   return (
     <div>
@@ -203,7 +242,7 @@ function deleteClick(){
                     Company Name
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtcompanyName" name="Name" placeholder="Enter Company Name" className="form-control"
+                      <input type="text" id="txtcompanyName" name="companyName" placeholder="Enter Company Name" className="form-control"
                         value={companyForm.companyName} 
                       onChange={changeHandler}
                       />
@@ -214,7 +253,7 @@ function deleteClick(){
                       Company Address
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtcompanyAddress" name="Address" placeholder="Enter Company Address" className="form-control"
+                      <input type="text" id="txtcompanyAddress" name="companyAddress" placeholder="Enter Company Address" className="form-control"
                         value={companyForm.companyAddress} 
                       onChange={changeHandler}
                       />
@@ -222,11 +261,11 @@ function deleteClick(){
                   </div>
 
                   <div className='form-group row'>
-                   <label for="txtcompanyGst" className='col-sm-4'>
-                      Company Address
+                   <label for="txtcompanyGST" className='col-sm-4'>
+                     companyGST
                     </label>
                     <div className='col-sm-8'>
-                      <input type="text" id="txtcompanyGst" name="companyGst" placeholder="Enter Company Address" className="form-control"
+                      <input type="text" id="txtcompanyGST" name="companyGST" placeholder="Enter Company GST" className="form-control"
                         value={companyForm.companyGST} 
                       onChange={changeHandler}
                       />
@@ -237,9 +276,9 @@ function deleteClick(){
                 {/* Footer */}
                 <div className='modal-footer bg-info'>
                   <button
-                     //onClick={editClick} 
+                     onClick={updateClick} 
                     className="btn btn-success" data-dismiss="modal">
-                      Save 
+                      Update 
                   </button>
                   <button className='btn btn-danger' data-dismiss="modal">
                     Cancel
