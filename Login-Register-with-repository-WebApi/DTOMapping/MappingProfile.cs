@@ -11,6 +11,8 @@ namespace Company_Project.DTOMapping
         {
             CreateMap<Company, CompanyDTO>().ReverseMap();
             CreateMap<Employee,EmployeeDTO>().ReverseMap();
+            CreateMap<Designation, DesignationDTO>().ReverseMap();
+            CreateMap<EmployeeDesignation, EmployeeDesignationDTO>().ReverseMap();
         }
     }
 }

@@ -39,6 +39,9 @@ builder.Services.AddScoped<IAuthenticateRepository, AuthenticateRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IDesignationRepository, DesignationRepository>();
+builder.Services.AddScoped<IEmployeeDesignationRepository, EmployeeDesignationRepository>();
+
 
 
 // For Entity Framework
