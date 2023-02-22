@@ -7,6 +7,8 @@ namespace Company_Project.Models
     {
         public string? Salary { get; set; }
         public string? Name { get; set; }
+        [NotMapped]
+        public string? Role { get; set; }
 
     }
 }

@@ -120,7 +120,7 @@ namespace Company_Project.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("Company_Project.Models.Designation", b =>
@@ -137,7 +137,7 @@ namespace Company_Project.Migrations
 
                     b.HasKey("DesignationId");
 
-                    b.ToTable("Designations");
+                    b.ToTable("Designations", (string)null);
                 });
 
             modelBuilder.Entity("Company_Project.Models.Employee", b =>
@@ -178,7 +178,7 @@ namespace Company_Project.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("Company_Project.Models.EmployeeDesignation", b =>
@@ -196,7 +196,7 @@ namespace Company_Project.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("employeeDesignations");
+                    b.ToTable("employeeDesignations", (string)null);
                 });
 
             modelBuilder.Entity("Company_Project.Models.Leave", b =>
@@ -229,7 +229,7 @@ namespace Company_Project.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Leaves");
+                    b.ToTable("Leaves", (string)null);
                 });
 
             modelBuilder.Entity("Company_Project.Models.TokenInfo", b =>
@@ -253,7 +253,7 @@ namespace Company_Project.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("TokenInfo");
+                    b.ToTable("TokenInfo", (string)null);
                 });
 
             modelBuilder.Entity("DesignationEmployee", b =>
@@ -268,7 +268,7 @@ namespace Company_Project.Migrations
 
                     b.HasIndex("EmployeesEmployeeId");
 
-                    b.ToTable("DesignationEmployee");
+                    b.ToTable("DesignationEmployee", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

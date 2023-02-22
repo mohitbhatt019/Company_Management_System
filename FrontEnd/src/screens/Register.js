@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Header from './Header';
 
 
 function Register() {
   const initData={
     Username:"",
     Email:"",
-    Password:""
+    Password:"",
+    Role:""
   };
   const[registerForm,setRegisterForm]=useState(initData);
   const[registerFormError,setregisterFormError]=useState(initData);
+  const [selectedRole, setSelectedRole] = useState('');
+   const roles = [ 'Company', 'Employee'];
+
   const navigate=useNavigate();
 
   const ChangeHandler=(event)=>{
@@ -21,40 +24,46 @@ function Register() {
   }
 
   const registerClick=()=>{
+    debugger
     //alert(registerForm.Username)
 
     //Validation Check
     let hasError=false;
     let messages=initData;
 
-    if(registerForm.Username.trim().length==0)
-    {
-      hasError=true;
-      messages={...messages,Username:"Username is empty!!!"};
-    }
-    if(registerForm.Password.trim().length==0){
-      messages={...messages,Password:"Password is empty"}
-    }
-    if(registerFormError.Email.trim().length==0){
-      messages={...messages,Email:"Email is empty"}
+     if(registerForm.Username.trim().length==0)
+     {
+       hasError=true;
+       messages={...messages,Username:"Username is empty!!!"};
+     }
+     if(registerForm.Password.trim().length==0){
+       messages={...messages,Password:"Password is empty"}
+     }
+     if(registerFormError.Email.trim().length==0){
+       messages={...messages,Email:"Email is empty"}
+     }
+     if(setSelectedRole.Role==null){
+      messages={...messages,Role:"Role is empty"}
     }
     if(hasError){
-      setregisterFormError(messages);
+       setregisterFormError(messages);
     }
     else{
       setregisterFormError(initData);
-   
+      registerForm.Role = selectedRole;
+   console.log(registerForm)
     //alert(registerForm.Username)
     axios.post("https://localhost:7077/api/Authenticate/Register",registerForm).then((d)=>{
       if(d){
         alert("User Registered Successfully")
+        navigate("/login")
       }
       else{
         alert("User Not Registeres/ Retry")
       }
     }).catch((e)=>{
-        alert("User Not Registeres/ Retry")
-        //alert(JSON.stringify(e));
+        //alert("Wrong with api")
+        alert(JSON.stringify(e));
     })
   }
   }
@@ -96,6 +105,27 @@ function Register() {
 
       </div>
     </div>
+
+    { <div className='form-group row'>
+      <label className='col-lg-4' for="role">User Role</label>
+      <div className='col-lg-8'>
+      <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+  <option value="">Select a role</option>
+  {roles.map((role) => (
+    <option key={role} value={role}>
+      {role}
+    </option>
+    
+  ))}
+  { <p className='text-danger'>{registerForm.selectedRole}</p> }
+</select>
+
+      </div>
+    </div> }
+
+    
+{/* <p>You selected {selectedRole}.</p> */}
+
   
   </div>
   <div className='card-footer text-muted'>

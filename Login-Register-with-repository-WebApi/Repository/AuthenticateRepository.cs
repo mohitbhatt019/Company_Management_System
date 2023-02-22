@@ -36,8 +36,11 @@ namespace Company_Project.Repository
         {
             var user = await _userManager.CreateAsync(registerModel, registerModel.PasswordHash);
             if (!user.Succeeded) return false;
+         
 
-            else return true;
+            else
+                await _userManager.AddToRoleAsync(registerModel, registerModel.Role); 
+            return true;
 
         }
     }

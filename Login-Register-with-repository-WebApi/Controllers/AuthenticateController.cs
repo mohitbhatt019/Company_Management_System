@@ -46,7 +46,8 @@ namespace Company_Project.Controllers
             {
                 UserName = registerModel.Username,
                 Email = registerModel.Email,
-                PasswordHash=registerModel.Password
+                PasswordHash=registerModel.Password,
+                Role=registerModel.Role
             };
             var result = await _authenticateRepository.RegisterUser(user);
             if (!result) return StatusCode(StatusCodes.Status500InternalServerError);
