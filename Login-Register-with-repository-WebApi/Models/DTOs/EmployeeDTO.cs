@@ -11,6 +11,6 @@ namespace Company_Project.Models.DTOs
         public string Employee_Pancard_Number { get; set; }
         public int Employee_Account_Number { get; set; }
         public int Employee_PF_Number { get; set; }
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

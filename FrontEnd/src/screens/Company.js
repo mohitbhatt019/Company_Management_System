@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
+import { useNavigate } from 'react-router-dom';
+
+
 
 function Company() {
 const initData={
@@ -9,7 +12,7 @@ const initData={
     companyAddress: "",
     companyGST: ""
 }
-
+const navigate=new useNavigate();
 const[company,setCompany]=useState(null);
 const[companyForm,setcompanyForm]=useState({});
 
@@ -29,7 +32,7 @@ function saveClick(){
         //jwt
         let token=localStorage.getItem("currentUser");
             alert(companyForm.companyAddress)
-        axios.post("https://localhost:7077/api/Company",companyForm,
+        axios.post("https://localhost:7077/api/Company/AddCompany",companyForm,
         {headers:{Authorization:`Bearer ${token}`}},
         ).then((d)=>{
          if(d.data){
@@ -48,8 +51,9 @@ function saveClick(){
 
 
 function getAll(){
+  
   let token=localStorage.getItem("currentUser");
-  axios.get("https://localhost:7077/api/Company",{headers:{Authorization:`Bearer ${token}`},}).then((d)=>{
+  axios.get("https://localhost:7077/api/Company/GetCompany",{headers:{Authorization:`Bearer ${token}`},}).then((d)=>{
     if(d.data){
       console.log(d.data)
       setCompany(d.data)
@@ -73,15 +77,24 @@ function renderCompany(){
             <td>{item.companyAddress}</td>
             <td>{item.companyGST}</td>
             <td>
-              <button onClick={()=>editClick(item)} className='btn btn-info m-1' data-toggle="modal" data-target="#editModal">Edit</button>
-              <button onClick={()=>deleteClick(item.companyId)} className='btn btn-danger'>Delete
-              </button>
+              <button onClick={()=>editClick(item)} className='bg-info m-2' data-toggle="modal" data-target="#editModal">Edit Company</button>
+              <button onClick={()=>deleteClick(item.companyId)} className='bg-danger m-2'>Delete Company </button>
+              <button onClick={() => employeeList(item.companyId)} className="bg-info m-2" >Employees List</button>
+             
             </td>
         </tr>
        )
     })
     return companyRows
 }
+
+
+function employeeList(companyId){
+  
+  console.log(companyId);
+  navigate('/employeeList', { state: { companyId: companyId } });
+}
+
 
 function editClick(data){
 setcompanyForm(data);
@@ -91,7 +104,7 @@ function updateClick(){
   // debugger
   let token=localStorage.getItem("currentUser");
   //alert(employeeForm.employeeName)
-  axios.put("https://localhost:7077/api/Company",companyForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
+  axios.put("https://localhost:7077/api/Company/UpdateCompany",companyForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
     if(d.data){ 
       getAll()
       alert("Api call sucessfull")
@@ -116,7 +129,7 @@ function deleteClick(companyId){
   let ans=window.confirm('Want to delete data???')
   if(!ans) return;
   
-  axios.delete("https://localhost:7077/api/Company?companyId="+companyId,{headers:{Authorization:`Bearer ${token}`},
+  axios.delete("https://localhost:7077/api/Company/DeleteCompany?companyId="+companyId,{headers:{Authorization:`Bearer ${token}`},
 }).then((d)=>{
   
     if(d){
@@ -141,7 +154,7 @@ function deleteClick(companyId){
                 <h2 className='text-info'>Company List</h2>
             </div>
             <div className='col-3'>
-                <button className='btn btn-info' data-toggle="modal" data-target="#newModal">New Employee</button>
+                <button className='btn btn-info' data-toggle="modal" data-target="#newModal">New Company</button>
             </div>
         </div>
 
@@ -288,8 +301,7 @@ function deleteClick(companyId){
             </div>
           </div>
         </form>
-
-
+        // EmployeeListCompany
     </div>
   )
 }

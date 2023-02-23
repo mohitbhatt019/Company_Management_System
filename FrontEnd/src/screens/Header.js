@@ -36,6 +36,9 @@ function Header() {
               <Link to="/company" class="nav-link " href="#">Company</Link>
             </li>
         
+            {/* <li class="nav-item">
+              <Link to="/employeeList" class="nav-link " href="#">EmployeesList</Link>
+            </li> */}
           </ul>
           {user?(
             <div/>

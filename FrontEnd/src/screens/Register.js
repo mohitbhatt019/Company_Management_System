@@ -13,7 +13,7 @@ function Register() {
   const[registerForm,setRegisterForm]=useState(initData);
   const[registerFormError,setregisterFormError]=useState(initData);
   const [selectedRole, setSelectedRole] = useState('');
-   const roles = [ 'Company', 'Employee'];
+   const roles = [ 'Admin','Company', 'Employee'];
 
   const navigate=useNavigate();
 

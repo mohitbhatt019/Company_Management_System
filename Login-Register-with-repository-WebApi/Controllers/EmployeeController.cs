@@ -18,7 +18,6 @@ namespace Company_Project.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ApplicationDbContext _context;
-
         private readonly IMapper _mapper;
         public EmployeeController(IEmployeeRepository employeeRepository, IMapper mapper, ApplicationDbContext context)
         {
@@ -74,6 +73,7 @@ namespace Company_Project.Controllers
         public IActionResult DeleteEmployees(int employeeId)
             {
             if (employeeId == 0) return NotFound();
+            
             _employeeRepository.Remove(employeeId);
             return Ok(new { message = "Employee Deleted Sucessfully",status=1 });
 

@@ -8,6 +8,7 @@ import Home from './screens/Home';
 import About from './screens/About';
 import Employee from './screens/Employee';
 import Company from './screens/Company';
+import EmployeeList from './screens/EmployeeList';
 
 function App() {
   return (
@@ -21,7 +22,9 @@ function App() {
         <Route path='home' element={<Home/>}/>   
         <Route path='about' element={<About/>}/>   
         <Route path='employee' element={<Employee/>}/>   
-        <Route path='company' element={<Company/>}/>   
+        <Route path='company' element={<Company/>}/> 
+        <Route path='/employeeList' element={<EmployeeList/>}/>   
+          
       </Routes>
       </BrowserRouter>
     </div>

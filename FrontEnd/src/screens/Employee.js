@@ -82,7 +82,8 @@ function Employee() {
       debugger
             //jwt
             let token=localStorage.getItem("currentUser");
-                alert(employeeForm.employeeName)
+                //alert(employeeForm.employeeName)
+                console.log(employeeForm)
             axios.post("https://localhost:7077/api/Employee",employeeForm,
             
             {headers:{Authorization:`Bearer ${token}`}},
@@ -124,6 +125,7 @@ function Employee() {
      }
   
    function getAll(){
+    debugger
     //JWT
      let token=localStorage.getItem("currentUser");
      console.log(token)
