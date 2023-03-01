@@ -25,6 +25,11 @@ function EmployeeList() {
   const [selectedRole, setSelectedRole] = useState('');
   const roles = [ 'Company', 'Employee'];
 
+  const[designatioEmployee,setDesignatioEmployee]=useState([]);
+ 
+
+
+
   
 
 
@@ -55,7 +60,7 @@ function EmployeeList() {
 
   function getAll(companyId) {
     const token = localStorage.getItem('currentUser');
-    console.log(employeeList)
+    //console.log(employeeList)
     axios
       .get(`https://localhost:7077/api/Company/EmployeesInTheCompany?companyId=${companyId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -74,7 +79,7 @@ function EmployeeList() {
     debugger
     let token=localStorage.getItem("currentUser");
     employeeForm.role=selectedRole
-    console.log(employeeForm)
+    //console.log(employeeForm)
     axios.post("https://localhost:7077/api/Employee",employeeForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
       if(d){
          setEmployeeForm({ companyId: companyId }); // Clear form fields except companyId
@@ -86,7 +91,7 @@ function EmployeeList() {
         alert("Employee not saved")
       }
     }).catch((e)=>{
-      alert(d.message)
+      alert(e)
     })
   }
 
@@ -99,7 +104,7 @@ function EmployeeList() {
   function saveDesignation(){
     debugger
     let token=localStorage.getItem("currentUser")
-console.log(designationForm)
+  console.log(designationForm)
     axios.post("https://localhost:7077/api/Company/AddDesignation",designationForm,{headers:{Authorization:`Bearer ${token}`}}).then((d)=>{
       if(d.data.status==2){
         alert(d.data.message)
@@ -131,8 +136,53 @@ console.log(designationForm)
   }
 
 function designationsList(){
+  debugger
   let token=localStorage.getItem('currentUser')
- //** */
+  console.log(companyId)
+  axios.get("https://localhost:7077/api/Company/EmployeesWithDesignationsInCompany/"+companyId,{headers:{Authorization:`Bearer ${token}`},
+}).then((d)=>{
+    if(d.data){
+      //console.log(d.data)
+      setDesignatioEmployee(d.data)
+      alert("api Run")
+
+    }
+  }).catch((e)=>{
+    alert("No designation is assigned in the company")
+
+  })
+}
+
+function deleteEmployeeDesignation(employeeId){
+  debugger
+  let token=localStorage.getItem('currentUser')
+  let ans=window.confirm('Want to delete data???')
+      if(!ans) return;  
+      console.log(employeeId)
+      axios.delete("https://localhost:7077/api/Company/DeleteEmployeesWithDesignationsInCompany?employeeId="+employeeId,{
+      headers:{Authorization:`Bearer ${token}`},
+    }).then((d)=>{
+      
+        if(d){
+          alert(employeeId)
+          alert("Data deleted successfully");
+          getAll();
+        }
+        else{
+          alert(d.data.message)
+        }
+      }).catch((e)=>{
+        alert(JSON.stringify(e));
+
+      })
+}
+
+function editClick(data){
+setEmployeeForm(data)
+}
+
+function deleteClick(){
+  
 }
 
   return (
@@ -158,23 +208,31 @@ function designationsList(){
       <table className="table table-bordered">
         <thead className="bg-info">
           <tr className="text-black">
+            <th>Employee ID</th>
             <th>Employee Name</th>
             <th>Employee Address</th>
             <th>Employee Pancard Number</th>
             <th>Employee Account Number</th>
             <th>Employee PF Number</th>
             <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {employeeList.map((employee, index) => (
             <tr key={index}>
+              <td>{employee.employeeId}</td>
               <td>{employee.employeeName}</td>
               <td>{employee.employeeAddress}</td>
               <td>{employee.employee_Pancard_Number}</td>
               <td>{employee.employee_Account_Number}</td>
               <td>{employee.employee_PF_Number}</td>
               <td>{employee.role}</td>
+              <td>
+              <button onClick={()=>editClick(employee)} className='btn btn-info m-1' data-toggle='modal'data-target="#editModel">Edit</button>
+              <button onClick={()=>deleteClick(employee.employeeId)} className='btn btn-danger'>Delete</button>
+              
+            </td> 
             </tr>
           ))}
         </tbody>
@@ -401,9 +459,9 @@ function designationsList(){
                       />
                     </div>
                   </div>  
-
-
-                  </div>
+                  </div>  
+ 
+                  
       <div class="modal-footer">
         <button type="button" onClick={saveAssignDesignation} class="btn btn-primary">Save</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -428,12 +486,23 @@ function designationsList(){
            <table class='table table-bodred table-hover'>
               <thead>
                 <tr>
-                  <th>Designation Id</th>
+                  <th>Employee Id</th>
+                  <th>Employee Name</th>
                   <th>Designation Name</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-
+              {designatioEmployee.map((employee, index) => (
+            <tr key={index}>
+              <td>{employee.employeeId}</td>
+              <td>{employee.employeeName}</td>
+              <td>{employee.designations}</td>
+              <td>
+              <button type="button" onClick={()=>deleteEmployeeDesignation(employee.employeeId)} class="btn btn-primary">Delete</button>
+              </td>
+            </tr>
+          ))}
               </tbody>
             </table>     
 
@@ -445,9 +514,95 @@ function designationsList(){
   </div>
 </div>
 
+ {/* Employee Edit */}
+ <form>
+          <div className='modal' id="editModel" role="dialog">
+            <div className="modal-dialog">
+              <div className='modal-content'>
+                {/* header */}
+                <div className='modal-header bg-info'>
+                  <div className='modal-title text-white'>Edit Employee</div>
+                  <button className='close' data-dismiss="modal">
+                    <span>&times;</span>
+                  </button>
+                </div>
+                   {/* Body */}
+                    <div className='modal-body'>
+                  <div className='form-group row'>
+                    <label for="txtename" className='col-sm-4'>
+                    Employee Name
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="text" id='txtename' name="employeeName" placeholder="Enter Employee Name" className="form-control"
+                        value={employeeForm.employeeName} 
+                       onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+                  <div className='form-group row'>
+                   <label for="employeeAddres" className='col-sm-4'>
+                   Employee Address
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="text" id="employeeAddres" name="employeeAddress" placeholder="Enter Address" className="form-control"
+                        value={employeeForm.employeeAddress} 
+                      onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+                  <div className='form-group row'>
+                    <label for="txtpanc" className='col-sm-4'>
+                    employee Pancard Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="text" id="txtpanc" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
+                        value={employeeForm.employee_Pancard_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_Account_Num" className='col-sm-4'>
+                    Employee Account Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_Account_Num" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
+                        value={employeeForm.employee_Account_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
+
+                  <div className='form-group row'>
+                    <label for="employee_PF_Num" className='col-sm-4'>
+                    Employee PF Number
+                    </label>
+                    <div className='col-sm-8'>
+                      <input type="number" id="employee_PF_Num" name="employee_PF_Number" placeholder="Enter Employee PF Number" className="form-control"
+                        value={employeeForm.employee_PF_Number}
+                        onChange={changeHandler}
+                      />
+                    </div>
+                  </div>
 
 
-
+                </div>
+                {/* Footer */}
+                <div className='modal-footer bg-info'>
+                  <button
+                      //onClick={updateClick} 
+                    className="btn btn-success" data-dismiss="modal">
+                      Update 
+                  </button>
+                  <button className='btn btn-danger' data-dismiss="modal">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>         
     </div>
   );
 }

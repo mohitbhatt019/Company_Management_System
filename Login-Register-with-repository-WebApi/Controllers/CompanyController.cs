@@ -16,12 +16,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize (Roles ="Admin")]
 
     public class CompanyController : ControllerBase
     {
@@ -91,7 +92,6 @@ namespace Company_Project.Controllers
 
         [HttpDelete]
         [Route("DeleteCompany")]
-
         public IActionResult DeleteCompany(int companyId)
         {
             if (companyId == null)
@@ -106,6 +106,20 @@ namespace Company_Project.Controllers
             {
                 return NotFound();
             }
+
+            // Delete the Designation assigned to employees
+            foreach (var employee in employees)
+            {
+                var employeeDesignation = _context.employeeDesignations.Where(ed => ed.EmployeeId == employee.EmployeeId).ToList();
+                if (employeeDesignation != null)
+                {
+                    _context.employeeDesignations.RemoveRange(employeeDesignation);
+                }
+            }
+
+            //Here Designation assigned to employee will delete
+
+            //////////////////////////////////////////////////////////////////////////////
 
             foreach (var employee in employees)
             {
@@ -160,13 +174,12 @@ namespace Company_Project.Controllers
 
             return Ok();
         }
-        //In this code, we first find all the employees in the company using a LINQ query.If there are no employees found, we return a NotFound() response. If there are employees found, we iterate through each employee and find the user associated with that employee.We then delete the user and the employee, and move on to the next employee if no user is found.
-    //Finally, we save the changes to the database and return an Ok() response to indicate that the operation was successful.
 
 
 
-//This method will update company
-[HttpPut]
+
+        //This method will update company
+        [HttpPut]
         [Route("UpdateCompany")]
         public IActionResult UpdateCompany([FromBody] CompanyDTO companyDTO)
         {
@@ -261,5 +274,43 @@ namespace Company_Project.Controllers
             return Ok(new { empInDb, message = "Employee List Sucessfully" });
         }
 
+        //In this method, i have displayed the employees of the the same company, that have assigned any designation
+        [HttpGet]
+        [Route("EmployeesWithDesignationsInCompany/{companyId}")]
+        public IActionResult EmployeesWithDesignationsInCompany(int companyId)
+        {
+            var employees = _context.Employees
+                .Where(e => e.CompanyId == companyId)
+                .Include(e => e.EmployeeDesignations)
+                .ThenInclude(ed => ed.Designation)
+                .Where(e => e.EmployeeDesignations.Any())
+                .Select(e => new
+                {
+                    EmployeeId = e.EmployeeId,
+                    EmployeeName = e.EmployeeName,
+                    Designations = e.EmployeeDesignations.Select(ed => ed.Designation.Name)
+                })
+                .ToList();
+
+            if (employees.Count == 0)
+            {
+                return NotFound(new { message = "No employee registered in the company" });
+            }
+
+            return Ok(employees);
+        }
+
+        //In this method, i will delete Designation of the particular Employees
+        [HttpDelete]
+        [Route("DeleteEmployeesWithDesignationsInCompany")]
+        public IActionResult DeleteEmployeesWithDesignationsInCompany(int employeeId)
+        {
+            if (employeeId == null) return NotFound();
+            var employee=_employeeDesignationRepository.FirstOrDefault(a=>a.EmployeeId== employeeId);
+            if (employee == null) return NotFound();
+            _employeeDesignationRepository.Remove(employee);
+            return Ok(new {status=1,message="Employee Removed from Designation"});
+
+        }
     }
 }

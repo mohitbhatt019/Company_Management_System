@@ -19,6 +19,7 @@ namespace Company_Project.Models
         public string Role { get; set; }
 
         ///
+        public List<EmployeeDesignation>? EmployeeDesignations { get; set; }
 
 
     }
