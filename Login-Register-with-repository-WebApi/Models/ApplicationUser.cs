@@ -10,5 +10,7 @@ namespace Company_Project.Models
         [NotMapped]
         public string? Role { get; set; }
 
+      
+
     }
 }

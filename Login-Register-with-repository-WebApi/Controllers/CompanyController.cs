@@ -15,6 +15,7 @@ using Company_Project.Migrations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Security.Claims;
 
 namespace Company_Project.Controllers
 {
@@ -72,6 +73,10 @@ namespace Company_Project.Controllers
 
         public IActionResult GetCompany()
         {
+            var claimIdentity = (ClaimsIdentity)User.Identity;   //Which user logged in
+            var claim = claimIdentity.FindFirst(ClaimTypes.NameIdentifier);  //
+
+
             var companyList = _companyRepository.GetAll();
             if (companyList == null) return NotFound();
             return Ok(companyList);
@@ -97,58 +102,66 @@ namespace Company_Project.Controllers
             // Find all employees in the company
             var employees = _context.Employees.Where(e => e.CompanyId == companyId).ToList();
 
-            if (employees == null || employees.Count == 0)
+            if (employees == null)
             {
                 return NotFound();
             }
 
-            // Delete each employee and their associated user
             foreach (var employee in employees)
             {
                 // Find the user associated with the employee
                 var user = _userManager.FindByIdAsync(employee.ApplicationUserId).Result;
 
-                if (user == null)
-                {
-                    continue; // Move on to the next employee if no user is found
-                }
-
-                // Delete the user and employee
-                var result = _userManager.DeleteAsync(user).Result;
-
-                if (!result.Succeeded)
-                {
-                    return BadRequest(result.Errors);
-                }
-
+                // Delete the employee
                 _context.Employees.Remove(employee);
+
+                // Delete the user's identity records
+                var logins = _userManager.GetLoginsAsync(user).Result;
+                foreach (var login in logins)
+                {
+                    var result = _userManager.RemoveLoginAsync(user, login.LoginProvider, login.ProviderKey).Result;
+                    if (!result.Succeeded)
+                    {
+                        return BadRequest(result.Errors);
+                    }
+                }
+                var roles = _userManager.GetRolesAsync(user).Result;
+                foreach (var role in roles)
+                {
+                    var result = _userManager.RemoveFromRoleAsync(user, role).Result;
+                    if (!result.Succeeded)
+                    {
+                        return BadRequest(result.Errors);
+                    }
+                }
+
+                // Remove the user from the Companies table
+                var company = _context.Companies.FirstOrDefault(c => c.ApplicationUserId == user.Id);
+                if (company != null)
+                {
+                    company.ApplicationUserId = null;
+                }
+
+                // Delete the user
+                var result2 = _userManager.DeleteAsync(user).Result;
+                if (!result2.Succeeded)
+                {
+                    return BadRequest(result2.Errors);
+                }
+            }
+
+            // Delete the company
+            var companyToDelete = _context.Companies.Find(companyId);
+            if (companyToDelete != null)
+            {
+                _context.Companies.Remove(companyToDelete);
             }
             _context.SaveChanges();
+
             return Ok();
         }
         //In this code, we first find all the employees in the company using a LINQ query.If there are no employees found, we return a NotFound() response. If there are employees found, we iterate through each employee and find the user associated with that employee.We then delete the user and the employee, and move on to the next employee if no user is found.
     //Finally, we save the changes to the database and return an Ok() response to indicate that the operation was successful.
-
-
-
-
-
-            //var company = _context.Companies.FirstOrDefault(c => c.CompanyId == companyId);
-            //if (company == null)
-            //{
-            //    return NotFound();
-            //}
-
-    //var employeesToDelete = _context.Employees.Where(e => e.CompanyId == companyId);
-    //_context.Employees.RemoveRange(employeesToDelete);
-    //_context.Companies.Remove(company);
-    //_context.SaveChanges();
-    //return Ok();
-        
-
-
-
-
 
 
 
@@ -170,52 +183,30 @@ namespace Company_Project.Controllers
         [Route("AddDesignation")]
         public IActionResult AddDesignation([FromBody] DesignationDTO  designationDTO )
         {
+            //    //Here we checking, DesignationDto has data or not and Also serverSide validation
+
             if (!(designationDTO != null) && (ModelState.IsValid))
-            {
+            {     //If above condition is true, then it will return and show message
                 return BadRequest(ModelState);
             }
-            var designation= _mapper.Map<DesignationDTO,Designation>(designationDTO);
+            var designation = _mapper.Map<DesignationDTO, Designation>(designationDTO);
+            //Here we stores designation name That is pass and stores it in variable
+            var desig = designationDTO.Name;
+
+           //Here we find that the designation is exist in database or not
+            var designationInDb = _context.Designations.FirstOrDefault(designation => designation.Name == desig);
+
+           //if it is already exist in database then it will show error
+            if (designationInDb != null)
+            {
+                //If above condition is true then it will return
+               return Ok(new {status=2, message = "Designation already in database" });
+            }
 
 
-            _context.Designations.Add(designation);
-            _context.SaveChanges();
+            _designationRepository.Add(designation);
             return Ok(new { status = 1, messgae = "Designation created sucessfully" });
         }
-
-        //[HttpPost]
-        //[Route("AddDesignation")]
-
-        ////In this method, i have added designation in database and added some basic checks that designation cannot be duplicate and null
-        //public IActionResult AddDesignation([FromBody] DesignationDTO designationDTO)
-        //{
-        //    //Here we checking, DesignationDto has data or not and Also serverSide validation
-        //    if ((designationDTO == null) && (!ModelState.IsValid))
-        //    {
-        //        //If above condition is true, then it will return and show message
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    //Here we map Designation with designationDto
-        //    var designation = _mapper.Map<DesignationDTO, Designation>(designationDTO);
-
-        //    //Here we stores designation name That is pass and stores it in variable
-        //    //var desig = designationDTO.Name;
-
-        //    ////Here we find that the designation is exist in database or not
-        //    //var designationInDb = _context.Designations.FirstOrDefault(designation => designation.Name == desig);
-
-        //    ////if it is already exist in database then it will show error
-        //    //if (designationInDb != null)
-        //    //{
-        //    //    //If above condition is true then it will return
-        //    //    return BadRequest(new { message = "Designation already in database" });
-        //    //}
-
-        //    //Here designation stored in database
-        //    _designationRepository.Add(designation);
-        //    return Ok(new { message = "Designation Addded Sucessfully" });
-
-        //}
 
         [HttpPost]
         [Route("AddEmployeeDesignation")]
@@ -225,11 +216,18 @@ namespace Company_Project.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var dsgIdInDb = _context.Designations.FirstOrDefault(dsg => dsg.Name == employeeDesignationDTO.DesignationNAme);
+            if (dsgIdInDb == null) 
+            { 
+                return Ok(new {status=2,message="Designation not Added or Spelling Mistake"}); 
+            }
+            employeeDesignationDTO.DesignationId = dsgIdInDb.DesignationId;
             var employeeDesignation = _mapper.Map<EmployeeDesignationDTO, EmployeeDesignation>(employeeDesignationDTO);
             _employeeDesignationRepository.Add(employeeDesignation);
             return Ok(new { message = "Employee Designation Addded Sucessfully" });
 
         }
+
 
         [HttpGet]
         [Route("GetEmployeeDesignation")]

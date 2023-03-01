@@ -4,19 +4,38 @@ import axios from 'axios';
 
 function Employee() {
   const initData={
-    employeeName:"",
-    employeeAddress:"",
-    employee_Pancard_Number:"",
-    employee_Account_Number:"",
-    employee_PF_Number:"",
-    companyId:""
+    username:"",
+    email:"",
+    password:"",
+    role:"",
+    employeeName:"",//
+    employeeAddress:"",//
+    employee_Pancard_Number:"",//
+    employee_Account_Number:"",//
+    employee_PF_Number:"",//
+    companyId:""//
   };
   const[employees,setEmployees]=useState(null);
   const[employeeForm,setEmployeeForm]=useState({});
 
+  const [companies, setCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState('');
+
+  const [selectedRole, setSelectedRole] = useState('');
+  const roles = [ 'Admin','Company', 'Employee'];
+
   useEffect(()=>{
     getAll();
-    
+    let token=localStorage.getItem("currentUser");
+    axios.get("https://localhost:7077/api/Company/GetCompany", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      setCompanies(response.data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
     //console.log(employees);
   },[]);
 
@@ -83,7 +102,12 @@ function Employee() {
             //jwt
             let token=localStorage.getItem("currentUser");
                 //alert(employeeForm.employeeName)
+                employeeForm.companyId=selectedCompany
+                employeeForm.role=selectedRole
                 console.log(employeeForm)
+                console.log(employeeForm)
+                console.log(employeeForm)
+
             axios.post("https://localhost:7077/api/Employee",employeeForm,
             
             {headers:{Authorization:`Bearer ${token}`}},
@@ -172,107 +196,163 @@ function Employee() {
           { <tbody>{renderEmployee()}</tbody> }
         </table>
   
-        {/* Save */}
-        <form>
-          <div className='modal' id="newModal" role="dialog">
-            <div className="modal-dialog">
-              <div className='modal-content'>
-                {/* header */}
-                <div className='modal-dialog '>
-                  <div className='modal-content'>
-  
-                  </div>
-                  
-                </div>
-                {/* Body */}
-                <div className='modal-body'>
-                  <div className='form-group row'>
-                    <label for="txtname" className='col-sm-4'>
-                    Employee Name
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="text" id="txtname" name="employeeName" placeholder="Enter Employee Name" className="form-control"
-                        value={employeeForm.employeeName} 
-                       onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
-                  <div className='form-group row'>
-                   <label for="employeeAddress" className='col-sm-4'>
-                   Employee Address
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="text" id="employeeAddress" name="employeeAddress" placeholder="Enter Address" className="form-control"
-                        value={employeeForm.employeeAddress} 
-                      onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
-                  <div className='form-group row'>
-                    <label for="txtsalary" className='col-sm-4'>
-                    employee Pancard Number
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="text" id="txtsalary" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
-                        value={employeeForm.employee_Pancard_Number}
-                        onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
+  {/* Save */}
+  <form>
+    <div className='modal' id="newModal" role="dialog">
+      <div className="modal-dialog">
+        <div className='modal-content'>
+          {/* header */}
+          <div className='modal-dialog '>
+            <div className='modal-content'>
 
-                  <div className='form-group row'>
-                    <label for="employee_Account_Numberrr" className='col-sm-4'>
-                    Employee Account Number
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="number" id="employee_Account_Numberrr" name="employee_Account_Number" placeholder="Enter  Account Number" className="form-control"
-                        value={employeeForm.employee_Account_Number}
-                        onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
+            </div>
 
-                 
-                  <div className='form-group row'>
-                    <label for="employee_PF_Number" className='col-sm-4'>
-                    Employee PF Number
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="number" id="employee_PF_Number" name="employee_PF_Number" placeholder="Enter Employee PF Number" className="form-control"
-                        value={employeeForm.employee_PF_Number}
-                        onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
-                  <div className='form-group row'>
-                    <label for="EmployeeCompanyId" className='col-sm-4'>
-                    Employee Company Id
-                    </label>
-                    <div className='col-sm-8'>
-                      <input type="number" id="EmployeeCompanyId" name="companyId" placeholder="Enter Company Id" className="form-control"
-                        value={employeeForm.companyId}
-                        onChange={changeHandler}
-                      />
-                    </div>
-                  </div>
+          </div>
+          {/* Body */}
+          <div className='modal-body'>
+
+          <div className='form-group row'>
+      <label className='col-lg-4' for="txtusername" >Username</label>
+      <div className='col-lg-8'>
+        <input type="text" id="txtusername"  onChange={changeHandler} value={employeeForm.username}  placeholder='Enter Username' className='Form-control' 
+        name='Username'/>
+        {/* { <p className='text-danger'>{registerFormError.Username}</p> } */}
+      </div>
+    </div>
+
+    <div className='form-group row'>
+      <label className='col-lg-4' for="txtconfirmpassword">Email</label>
+      <div className='col-lg-8'>
+        <input type="text" onChange={changeHandler} value={employeeForm.email} id="txtconfirmpassword"  placeholder='Enter Email' className='Form-control' name='Email'/>
+        {/* { <p className='text-danger'>{registerFormError.Email}</p> } */}
+      </div>
+    </div>
+
+    
+    <div className='form-group row'>
+      <label className='col-lg-4' for="txtpassword">Password</label>
+      <div className='col-lg-8'>
+        <input type="password"  onChange={changeHandler} id="txtpassword" value={employeeForm.password}  placeholder='Enter Password' className='Form-control' name='Password'/>
+        {/* { <p className='text-danger'>{registerFormError.Password}</p> } */}
+
+      </div>
+    </div>
 
 
-                </div>
-                {/* Footer */}
-                <div className='modal-footer bg-info'>
-                  <button
-                      onClick={saveClick} 
-                    className="btn btn-success" data-dismiss="modal">
-                      Save 
-                  </button>
-                  <button className='btn btn-danger' data-dismiss="modal">
-                    Cancel
-                  </button>
-                </div>
+            <div className='form-group row'>
+              <label for="txtname" className='col-sm-4'>
+                Employee Name
+              </label>
+              <div className='col-sm-8'>
+                <input type="text" id="txtname" name="employeeName" placeholder="Enter Employee Name"
+                className="form-control" value={employeeForm.employeeName} onChange={changeHandler}
+                />
               </div>
             </div>
+            <div className='form-group row'>
+              <label for="employeeAddress" className='col-sm-4'>
+                Employee Address
+              </label>
+              <div className='col-sm-8'>
+                <input type="text" id="employeeAddress" name="employeeAddress" placeholder="Enter Address"
+                className="form-control" value={employeeForm.employeeAddress} onChange={changeHandler}
+                />
+              </div>
+            </div>
+            <div className='form-group row'>
+              <label for="txtsalary" className='col-sm-4'>
+                employee Pancard Number
+              </label>
+              <div className='col-sm-8'>
+                <input type="text" id="txtsalary" name="employee_Pancard_Number" placeholder="Enter Pancard Number"
+                className="form-control" value={employeeForm.employee_Pancard_Number}
+                onChange={changeHandler} />
+              </div>
+            </div>
+
+            <div className='form-group row'>
+              <label for="employee_Account_Numberrr" className='col-sm-4'>
+                Employee Account Number
+              </label>
+              <div className='col-sm-8'>
+                <input type="number" id="employee_Account_Numberrr" name="employee_Account_Number"
+                placeholder="Enter  Account Number" className="form-control" value={employeeForm.employee_Account_Number}
+                onChange={changeHandler} />
+              </div>
+            </div>
+
+
+            <div className='form-group row'>
+              <label for="employee_PF_Number" className='col-sm-4'>
+                Employee PF Number
+              </label>
+              <div className='col-sm-8'>
+                <input type="number" id="employee_PF_Number" name="employee_PF_Number" placeholder="Enter Employee PF Number"
+                className="form-control" value={employeeForm.employee_PF_Number}
+                onChange={changeHandler} />
+              </div>
+            </div>
+            {/*
+            <div className='form-group row'>
+              <label for="EmployeeCompanyId" className='col-sm-4'>
+                Employee Company Id
+              </label>
+              <div className='col-sm-8'>
+                <input type="number" id="EmployeeCompanyId" name="companyId" placeholder="Enter Company Id"
+                className="form-control" value={employeeForm.companyId} onChange={changeHandler}
+                />
+              </div>
+            </div> */}
+            <div className='form-group row'>
+              <label for="EmployeeCompanyId" className='col-sm-4'>
+                Employee Company Name
+              </label>
+              <div className='col-lg-8'>
+
+              <select value={selectedCompany} onChange={(e)=> setSelectedCompany(e.target.value)}>
+                  <label for="EmployeeCompanyId"
+                  className='col-sm-4'>
+                    Employee Company Id
+                  </label>
+                  <option value="">Select a company</option>
+                  {companies.map((company) => (
+                  <option key={company.companyName} value={company.companyId}>
+                    {company.companyName}
+                  </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className='form-group row'>
+  <label className='col-lg-4' htmlFor="role">User Role</label>
+  <div className='col-lg-8'>
+    <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} id="role">
+      <option value="">Select a role</option>
+      {roles.map((role) => (
+        <option key={role} value={role}>
+          {role}
+        </option>
+      ))}
+    </select>
+  </div>
+
+
           </div>
-        </form>
+
+          {/* Footer */}
+          <div className='modal-footer bg-info'>
+            <button onClick={saveClick} className="btn btn-success" data-dismiss="modal">
+              Save
+            </button>
+            <button className='btn btn-danger' data-dismiss="modal">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </form>
   
         {/* Edit */}
         <form>
@@ -311,11 +391,11 @@ function Employee() {
                     </div>
                   </div>
                   <div className='form-group row'>
-                    <label for="txtsal" className='col-sm-4'>
+                    <label for="txtpanc" className='col-sm-4'>
                     employee Pancard Number
                     </label>
                     <div className='col-sm-8'>
-                      <input type="number" id="txtsal" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
+                      <input type="text" id="txtpanc" name="employee_Pancard_Number" placeholder="Enter Pancard Number" className="form-control"
                         value={employeeForm.employee_Pancard_Number}
                         onChange={changeHandler}
                       />

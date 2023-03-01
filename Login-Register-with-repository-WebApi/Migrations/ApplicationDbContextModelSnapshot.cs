@@ -151,7 +151,7 @@ namespace Company_Project.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("EmployeeAddress")
@@ -172,6 +172,10 @@ namespace Company_Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EmployeeId");
 
                     b.HasIndex("ApplicationUserId");
@@ -189,10 +193,10 @@ namespace Company_Project.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeDesignationId"), 1L, 1);
 
-                    b.Property<int>("DesignationId")
+                    b.Property<int?>("DesignationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeDesignationId");
@@ -259,21 +263,6 @@ namespace Company_Project.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("TokenInfo");
-                });
-
-            modelBuilder.Entity("DesignationEmployee", b =>
-                {
-                    b.Property<int>("Employee_DesignationsDesignationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmployeesEmployeeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Employee_DesignationsDesignationId", "EmployeesEmployeeId");
-
-                    b.HasIndex("EmployeesEmployeeId");
-
-                    b.ToTable("DesignationEmployee");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -426,9 +415,7 @@ namespace Company_Project.Migrations
 
                     b.HasOne("Company_Project.Models.Company", "Company")
                         .WithMany("Company_Employees")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.Navigation("ApplicationUser");
 
@@ -439,15 +426,11 @@ namespace Company_Project.Migrations
                 {
                     b.HasOne("Company_Project.Models.Designation", "Designation")
                         .WithMany()
-                        .HasForeignKey("DesignationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DesignationId");
 
                     b.HasOne("Company_Project.Models.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.Navigation("Designation");
 
@@ -463,21 +446,6 @@ namespace Company_Project.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("DesignationEmployee", b =>
-                {
-                    b.HasOne("Company_Project.Models.Designation", null)
-                        .WithMany()
-                        .HasForeignKey("Employee_DesignationsDesignationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Company_Project.Models.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeesEmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

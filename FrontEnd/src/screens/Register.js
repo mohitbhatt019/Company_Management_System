@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -14,6 +14,9 @@ function Register() {
   const[registerFormError,setregisterFormError]=useState(initData);
   const [selectedRole, setSelectedRole] = useState('');
    const roles = [ 'Admin','Company', 'Employee'];
+
+   const [companies, setCompanies] = useState([]);
+   const [selectedCompany, setSelectedCompany] = useState('');
 
   const navigate=useNavigate();
 
@@ -68,6 +71,22 @@ function Register() {
   }
   }
 
+  useEffect(() => {
+    let token=localStorage.getItem("currentUser");
+    axios.get("https://localhost:7077/api/Company/GetCompany", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      setCompanies(response.data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }, []);
+
+  
+
+
  
  
   return (
@@ -106,22 +125,34 @@ function Register() {
       </div>
     </div>
 
-    { <div className='form-group row'>
-      <label className='col-lg-4' for="role">User Role</label>
-      <div className='col-lg-8'>
-      <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-  <option value="">Select a role</option>
-  {roles.map((role) => (
-    <option key={role} value={role}>
-      {role}
+    {registerFormError.Role && <p className='text-danger'>{registerFormError.Role}</p>}
+
+<div className='form-group row'>
+  <label className='col-lg-4' htmlFor="role">User Role</label>
+  <div className='col-lg-8'>
+    <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} id="role">
+      <option value="">Select a role</option>
+      {roles.map((role) => (
+        <option key={role} value={role}>
+          {role}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
+
+
+<select value={selectedCompany} onChange={(e) => setSelectedCompany(e.target.value)}>
+  <option value="">Select a company</option>
+  {companies.map((company) => (
+    <option key={company.companyId} value={company.companyName}>
+      {company.companyName}
     </option>
-    
   ))}
-  { <p className='text-danger'>{registerForm.selectedRole}</p> }
 </select>
 
-      </div>
-    </div> }
+
 
     
 {/* <p>You selected {selectedRole}.</p> */}

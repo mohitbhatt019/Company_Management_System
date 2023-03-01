@@ -9,5 +9,7 @@ namespace Company_Project.Models.DTO
         public string CompanyName { get; set; }
         public string CompanyAddress { get; set; }
         public string CompanyGST { get; set; }
+        public string? ApplicationUserId { get; set; }
+
     }
 }

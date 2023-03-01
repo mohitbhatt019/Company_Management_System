@@ -3,6 +3,7 @@ using Company_Project.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -18,6 +19,8 @@ namespace Company_Project.Controllers
         private readonly IAuthenticateRepository _authenticateRepository;
         private readonly ITokenService _tokenService;
         private readonly ApplicationDbContext _context;
+        private readonly ICompanyRepository _companyRepository;
+
 
 
 
@@ -25,7 +28,8 @@ namespace Company_Project.Controllers
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
-            IAuthenticateRepository authenticateRepository, ITokenService tokenService, ApplicationDbContext context)
+            IAuthenticateRepository authenticateRepository, ITokenService tokenService, ApplicationDbContext context,
+            ICompanyRepository companyRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -33,11 +37,29 @@ namespace Company_Project.Controllers
             _authenticateRepository = authenticateRepository;
             _tokenService = tokenService;
             _context = context;
+            _companyRepository = companyRepository;
+
         }
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {
+            //registerModel = new RegisterModel()
+            //{
+            //    CompanyList = _companyRepository.GetAll().Select(cl => new SelectListItem()
+            //    {
+            //        Text = cl.CompanyName,
+            //        Value = cl.CompanyId.ToString()
+            //    }),
+            //    RoleList = _roleManager.Roles.Where(r => r.Name != UserRoles.Role_Employee).Select(r => r.Name).
+            //   Select(rl => new SelectListItem()
+            //   {
+            //       Text = rl,
+            //       Value = rl
+            //   })
+            //};
+
+
             if (!ModelState.IsValid)
                 return BadRequest();
             var userExists = await _authenticateRepository.IsUnique(registerModel.Username);

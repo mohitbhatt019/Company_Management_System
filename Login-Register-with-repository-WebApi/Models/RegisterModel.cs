@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace Company_Project.Models
 {
@@ -16,5 +17,9 @@ namespace Company_Project.Models
 
         [Required(ErrorMessage = "Role is required")]
         public string Role { get; set; }
+        public IEnumerable<SelectListItem>? CompanyList { get; set; }
+        public IEnumerable<SelectListItem>? RoleList { get; set; }
+
+
     }
 }

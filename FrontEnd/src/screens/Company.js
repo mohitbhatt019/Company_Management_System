@@ -301,7 +301,6 @@ function deleteClick(companyId){
             </div>
           </div>
         </form>
-        // EmployeeListCompany
     </div>
   )
 }

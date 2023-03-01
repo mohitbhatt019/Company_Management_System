@@ -40,14 +40,14 @@ function Header() {
               <Link to="/employeeList" class="nav-link " href="#">EmployeesList</Link>
             </li> */}
           </ul>
-          {user?(
+          {/* {user?(
             <div/>
           ):(
             <li class="nav-item">
             
             <Link to="register" class="nav-link btn btn-outline-success my-2 my-sm-0 m-2" href="#">Register</Link>
             </li>
-            )}
+            )} */}
             {user?(
             <a onClick={logOut} class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</a>
             ):(
